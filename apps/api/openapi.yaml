@@ -1,0 +1,103 @@
+openapi: 3.0.3
+info:
+  title: Taller System API
+  version: 0.1.0
+  description: API base Sprint 1 para gestión operativa de talleres mecánicos.
+servers:
+  - url: https://api.example.com
+paths:
+  /v1/ordenes:
+    post:
+      summary: Crear orden de reparación por placa
+      tags: [Ordenes]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CrearOrdenRequest'
+      responses:
+        '201':
+          description: Orden creada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Orden'
+  /v1/ordenes/{idReparacion}/asignar:
+    patch:
+      summary: Asignar orden a un mecánico
+      tags: [Ordenes]
+      parameters:
+        - in: path
+          name: idReparacion
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [mecanicoId]
+              properties:
+                mecanicoId: { type: string, format: uuid }
+      responses:
+        '200':
+          description: Orden asignada
+  /v1/mecanicos/{mecanicoId}/ordenes:
+    get:
+      summary: Listar órdenes asignadas a mecánico
+      tags: [Ordenes]
+      parameters:
+        - in: path
+          name: mecanicoId
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: Listado de órdenes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Orden'
+components:
+  schemas:
+    CrearOrdenRequest:
+      type: object
+      required: [cliente, vehiculo, descripcionFalla, estadoPago]
+      properties:
+        cliente:
+          type: object
+          required: [nombre]
+          properties:
+            nombre: { type: string }
+            telefono: { type: string }
+            email: { type: string, format: email }
+        vehiculo:
+          type: object
+          required: [placa]
+          properties:
+            placa: { type: string }
+            marca: { type: string }
+            modelo: { type: string }
+            anio: { type: integer }
+        descripcionFalla: { type: string }
+        estadoPago:
+          type: string
+          enum: [PAGADO, PENDIENTE]
+    Orden:
+      type: object
+      properties:
+        idReparacion: { type: string, example: REP-20260503-0001 }
+        estado:
+          type: string
+          enum: [CREADA, ASIGNADA, EN_DIAGNOSTICO, EN_REPARACION, LISTA_ENTREGA, ENTREGADA, CANCELADA]
+        estadoPago:
+          type: string
+          enum: [PAGADO, PENDIENTE]
+        mecanicoId:
+          type: string
+          format: uuid
+          nullable: true

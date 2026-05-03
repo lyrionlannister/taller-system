@@ -123,3 +123,13 @@ certbot certonly \
 ```
 
 La documentacion oficial de Certbot recomienda `certonly --webroot` cuando ya tienes un servidor web sirviendo el challenge temporalmente.
+
+
+## Migración activa a sistema de talleres
+
+Este repositorio entra en **migración total** desde el modelo de tienda de repuestos hacia un sistema de administración de talleres mecánicos.
+
+- Se descontinúa el enfoque ecommerce.
+- El módulo `agents` será retirado.
+- Las automatizaciones se implementarán con `n8n`.
+- El plan de trabajo operativo se documenta en `PLAN_MIGRACION_TALLER.md`.
